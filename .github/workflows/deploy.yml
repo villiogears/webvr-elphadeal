@@ -25,10 +25,18 @@ jobs:
     #       sed -i -e 's/webGLCompressionFormat: ./webGLCompressionFormat: 2/' ProjectSettings/ProjectSettings.asset
     #     # Compression Formatを`Disabled`に書き換え
 
+      - uses: actions/cache@v3
+        with:
+          path: Library
+          key: Library-${{ hashFiles('ProjectSettings/ProjectVersion.txt') }}
+          restore-keys: |
+            Library-
+
       - uses: game-ci/unity-builder@v3
         with:
           targetPlatform: WebGL
           allowDirtyBuild: true # 上でProjectSettings.assetを変更しているため指定
+          projectPath: .
         env:
           UNITY_LICENSE: ${{ secrets['UNITY_LICENSE_2022'] }}
 
