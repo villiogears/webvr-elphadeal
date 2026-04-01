@@ -30,7 +30,7 @@ jobs:
           targetPlatform: WebGL
           allowDirtyBuild: true # 上でProjectSettings.assetを変更しているため指定
         env:
-          UNITY_LICENSE: ${{ secrets[UNITY_LICENSE_2022] }}
+          UNITY_LICENSE: ${{ secrets['UNITY_LICENSE_2022'] }}
 
       - uses: actions/upload-pages-artifact@v2
         with:
@@ -51,3 +51,4 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v2
+        # GitHub Pagesに公開
