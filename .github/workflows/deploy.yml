@@ -32,7 +32,7 @@ jobs:
         env:
           UNITY_LICENSE: ${{ secrets['UNITY_LICENSE_2022'] }}
 
-      - uses: actions/upload-pages-artifact@v2
+      - uses: actions/upload-pages-artifact@v3
         with:
           path: build/WebGL/WebGL
         # WebGLビルド出力をアーティファクトにアップロード
