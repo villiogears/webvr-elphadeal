@@ -3,7 +3,7 @@ name: Deploy to GitHub Pages
 on:
   push:
     branches:
-      - master
+      - main
   # masterブランチにpushされるたびにWebGLビルドして公開。条件はプロジェクトのニーズによって調整してください
 
 concurrency:
@@ -53,4 +53,3 @@ jobs:
         uses: actions/deploy-pages@v2
         # GitHub Pagesに公開
 
-        
