@@ -1,55 +1,35 @@
+
 name: Deploy to GitHub Pages
 
 on:
-  push:
-    branches:
-      - main
-  # masterブランチにpushされるたびにWebGLビルドして公開。条件はプロジェクトのニーズによって調整してください
-
-concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
-  # 先行ジョブがあればキャンセル
+	push:
+		branches:
+			- main
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
+	deploy:
+		runs-on: ubuntu-latest
+		steps:
+			- name: Checkout repository
+				uses: actions/checkout@v4
 
-    steps:
-      - uses: actions/checkout@v4
+			- name: Setup Node.js
+				uses: actions/setup-node@v4
+				with:
+					node-version: '20'
 
-      - name: Set CompressionFormat to Disabled
-        run: |
-          sed -i -e 's/webGLCompressionFormat: ./webGLCompressionFormat: 2/' ProjectSettings/ProjectSettings.asset
-        # Compression Formatを`Disabled`に書き換え
+			- name: Copy files for GitHub Pages
+				run: |
+					mkdir public
+					cp -r Build public/
+					cp -r TemplateData public/
+					cp index.html public/
+					cp manifest.webmanifest public/ || true
+					cp ServiceWorker.js public/
 
-      - uses: game-ci/unity-builder@v3
-        with:
-          targetPlatform: WebGL
-          allowDirtyBuild: true # 上でProjectSettings.assetを変更しているため指定
-        env:
-          UNITY_LICENSE: ${{ secrets['UNITY_LICENSE_2022'] }}
-
-      - uses: actions/upload-pages-artifact@v3
-        with:
-          path: build/WebGL/WebGL
-        # WebGLビルド出力をアーティファクトにアップロード
-
-  deploy:
-    runs-on: ubuntu-latest
-    needs: build
-    permissions:
-      id-token: write
-      pages: write
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-
-    steps:
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v2
-        # GitHub Pagesに公開
-
+			- name: Deploy to GitHub Pages
+				uses: peaceiris/actions-gh-pages@v4
+				with:
+					github_token: ${{ secrets.GITHUB_TOKEN }}
+					publish_dir: ./public
+					publish_branch: gh-pages
